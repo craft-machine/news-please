@@ -70,25 +70,27 @@ class NewsPlease:
         return final_article
 
     @staticmethod
-    def from_url(url, timeout=None):
+    def from_url(url, timeout=None, headers=None):
         """
         Crawls the article from the url and extracts relevant information.
         :param url:
         :param timeout: in seconds, if None, the urllib default is used
+        :param headers: request headers
         :return: A dict containing all the information of the article. Else, None.
         """
-        articles = NewsPlease.from_urls([url], timeout=timeout)
+        articles = NewsPlease.from_urls([url], timeout=timeout, headers=headers)
         if url in articles.keys():
             return articles[url]
         else:
             return None
 
     @staticmethod
-    def from_urls(urls, timeout=None):
+    def from_urls(urls, timeout=None, headers=None):
         """
         Crawls articles from the urls and extracts relevant information.
         :param urls:
         :param timeout: in seconds, if None, the urllib default is used
+        :param headers: request headers
         :return: A dict containing given URLs as keys, and extracted information as corresponding values.
         """
         results = {}
@@ -100,10 +102,10 @@ class NewsPlease:
             pass
         elif len(urls) == 1:
             url = urls[0]
-            html = SimpleCrawler.fetch_url(url, timeout=timeout)
+            html = SimpleCrawler.fetch_url(url, timeout=timeout, headers=headers)
             results[url] = NewsPlease.from_html(html, url, download_date)
         else:
-            results = SimpleCrawler.fetch_urls(urls)
+            results = SimpleCrawler.fetch_urls(urls, timeout=timeout, headers=headers)
             for url in results:
                 results[url] = NewsPlease.from_html(results[url], url, download_date)
 
